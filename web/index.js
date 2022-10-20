@@ -162,7 +162,6 @@ Shopify.Webhooks.Registry.addHandler('FULFILLMENTS_UPDATE', {
   path: '/api/fulfillment-update',
   webhookHandler: async (_topic, shop, _body) => {
     _body = JSON.parse(_body)
-    sendDataToKlaivyo(_body, shop)
     if (_body.shipment_status === 'delivered') {
       sendDataToKlaivyo(_body, shop)
     }
@@ -173,7 +172,6 @@ Shopify.Webhooks.Registry.addHandler('FULFILLMENTS_UPDATE', {
   path: '//api/fulfillment-update',
   webhookHandler: async (_topic, shop, _body) => {
     _body = JSON.parse(_body)
-    sendDataToKlaivyo(_body, shop)
     if (_body.shipment_status === 'delivered') {
       sendDataToKlaivyo(_body, shop)
     }
