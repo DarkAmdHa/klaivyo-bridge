@@ -26,9 +26,6 @@ const PROD_INDEX_PATH = `${process.cwd()}/frontend/dist/`
 
 const DB_PATH = `${process.cwd()}/database.sqlite`
 const scopes = process.env.SCOPES.split(',')
-scopes.push('read_fulfillments')
-scopes.push('write_fulfillments')
-scopes.push('read_orders')
 
 Shopify.Context.initialize({
   API_KEY: process.env.SHOPIFY_API_KEY,
