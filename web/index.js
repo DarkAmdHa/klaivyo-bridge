@@ -148,10 +148,32 @@ Shopify.Webhooks.Registry.addHandler('FULFILLMENTS_CREATE', {
     }
   },
 })
+Shopify.Webhooks.Registry.addHandler('FULFILLMENTS_CREATE', {
+  path: '//api/fulfillment-create',
+  webhookHandler: async (_topic, shop, _body) => {
+    _body = JSON.parse(_body)
+    if (_body.shipment_status === 'delivered') {
+      sendDataToKlaivyo(_body, shop)
+    }
+  },
+})
+
 Shopify.Webhooks.Registry.addHandler('FULFILLMENTS_UPDATE', {
   path: '/api/fulfillment-update',
   webhookHandler: async (_topic, shop, _body) => {
     _body = JSON.parse(_body)
+    sendDataToKlaivyo(_body, shop)
+    if (_body.shipment_status === 'delivered') {
+      sendDataToKlaivyo(_body, shop)
+    }
+  },
+})
+
+Shopify.Webhooks.Registry.addHandler('FULFILLMENTS_UPDATE', {
+  path: '//api/fulfillment-update',
+  webhookHandler: async (_topic, shop, _body) => {
+    _body = JSON.parse(_body)
+    sendDataToKlaivyo(_body, shop)
     if (_body.shipment_status === 'delivered') {
       sendDataToKlaivyo(_body, shop)
     }
@@ -207,39 +229,35 @@ export async function createServer(
       }
     }
   })
-  app.post('/api/fulfillment-create', async (req, res) => {
-    try {
-      await Shopify.Webhooks.Registry.process(req, res)
-      console.log(`Webhook processed, returned status code 200`)
-    } catch (e) {
-      console.log(`Failed to process webhook: ${e.message}`)
-      if (!res.headersSent) {
-        res.status(500).send(e.message)
+  app.post(
+    '/:var(api/fulfillment-create|/api/fulfillment-create)',
+    async (req, res) => {
+      try {
+        await Shopify.Webhooks.Registry.process(req, res)
+        console.log(`Webhook processed, returned status code 200`)
+      } catch (e) {
+        console.log(`Failed to process webhook: ${e.message}`)
+        if (!res.headersSent) {
+          res.status(500).send(e.message)
+        }
       }
     }
-  })
-  app.post('/api/fulfillment-update', async (req, res) => {
-    try {
-      await Shopify.Webhooks.Registry.process(req, res)
-      console.log(`Webhook processed, returned status code 200`)
-    } catch (e) {
-      console.log(`Failed to process webhook: ${e.message}`)
-      if (!res.headersSent) {
-        res.status(500).send(e.message)
+  )
+
+  app.post(
+    '/:var(api/fulfillment-update|/api/fulfillment-update)',
+    async (req, res) => {
+      try {
+        await Shopify.Webhooks.Registry.process(req, res)
+        console.log(`Webhook processed, returned status code 200`)
+      } catch (e) {
+        console.log(`Failed to process webhook: ${e.message}`)
+        if (!res.headersSent) {
+          res.status(500).send(e.message)
+        }
       }
     }
-  })
-  app.post('/api/fulfillment-event-create', async (req, res) => {
-    try {
-      await Shopify.Webhooks.Registry.process(req, res)
-      console.log(`Webhook processed, returned status code 200`)
-    } catch (e) {
-      console.log(`Failed to process webhook: ${e.message}`)
-      if (!res.headersSent) {
-        res.status(500).send(e.message)
-      }
-    }
-  })
+  )
 
   // All endpoints after this point will require an active session
   app.use(
