@@ -121,7 +121,7 @@ const sendDataToKlaivyo = async (_body, shop) => {
             session.shop,
             session.accessToken
           )
-          console.log(accessToken)
+          console.log(session.accessToken)
 
           const orderDiscountCodes = await client.query({
             data: `query {
