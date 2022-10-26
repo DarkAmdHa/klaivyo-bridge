@@ -113,7 +113,6 @@ const sendDataToKlaivyo = async (_body, shop) => {
   try {
     const shopSessions =
       await Shopify.Context.SESSION_STORAGE.findSessionsByShop(shop)
-    console.log(shopSessions)
     if (shopSessions.length > 0) {
       for (const session of shopSessions) {
         if (session.accessToken) {
@@ -121,8 +120,6 @@ const sendDataToKlaivyo = async (_body, shop) => {
             session.shop,
             session.accessToken
           )
-          console.log(session.accessToken)
-
           const orderDiscountCodes = await client.query({
             data: `query {
                 order: order(id: "gid:\/\/shopify\/Order\/${_body.order_id}") {
@@ -138,7 +135,6 @@ const sendDataToKlaivyo = async (_body, shop) => {
                 }
               }`,
           })
-          console.log(orderDiscountCodes.body.data.order)
           klaivyoObject.customer_properties.$totalAmountPaid =
             +orderDiscountCodes.body.data.order?.totalPriceSet?.shopMoney
               ?.amount
