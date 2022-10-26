@@ -92,7 +92,7 @@ const sendDataToKlaivyo = async (_body, shop) => {
   _body.line_items.forEach((item) => {
     klaivyoObject.properties.ItemNames.push(item.title)
     klaivyoObject.properties.OriginalOrderPrice =
-    klaivyoObject.properties.OriginalOrderPrice +
+      klaivyoObject.properties.OriginalOrderPrice +
       +(item.price * item.quantity)
 
     const itemObj = {
@@ -105,7 +105,7 @@ const sendDataToKlaivyo = async (_body, shop) => {
 
     klaivyoObject.properties.Items.push(itemObj)
   })
-  klaivyoObject.properties.OriginalOrderPrice =
+
   //Get discount codes applied by sending a GraphQl request:
   try {
     const shopSessions =
@@ -132,13 +132,10 @@ const sendDataToKlaivyo = async (_body, shop) => {
                 }
               }`,
           })
-            
 
           klaivyoObject.properties.TotalAmountPaid =
-          +orderDiscountCodes.body.data.order?.totalPriceSet?.shopMoney
-          ?.amount
-
-            
+            +orderDiscountCodes.body.data.order?.totalPriceSet?.shopMoney
+              ?.amount
 
           klaivyoObject.properties.DiscountCodeApplied.push(
             orderDiscountCodes.body.data.order?.discountCode
