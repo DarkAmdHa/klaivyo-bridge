@@ -83,6 +83,7 @@ const sendDataToKlaivyo = async (_body, shop) => {
     Province: [_body.destination.province],
     Country: [_body.destination.country],
     DiscountCodeApplied: [],
+    Items: [],
   }
   //Push product names
   _body.line_items.forEach((item) => {
@@ -92,6 +93,21 @@ const sendDataToKlaivyo = async (_body, shop) => {
       klaivyoObject.customer_properties.$originalOrderPrice +
       +item.price -
       +item.total_discount
+
+    const itemObj = {
+      Name: item.title,
+      Quantity: item.quantity,
+      SKU: item.sku,
+      ProductId: item.product_id,
+      Price: item.price,
+      Courier: _body.tracking_company,
+      CurrentStatus: _body.shipment_status,
+      City: _body.destination.city,
+      Province: _body.destination.province,
+      Country: _body.destination.country,
+    }
+
+    klaivyoObject.ItemNames.push(itemObj)
   })
   klaivyoObject.OriginalOrderPrice =
     klaivyoObject.customer_properties.$originalOrderPrice
@@ -142,6 +158,7 @@ const sendDataToKlaivyo = async (_body, shop) => {
       console.log(error)
     }
   }
+  console.log(klaivyoObject)
   encodedParams.set('data', JSON.stringify(klaivyoObject))
   const url = 'https://a.klaviyo.com/api/track'
   const options = {
