@@ -73,15 +73,28 @@ const sendDataToKlaivyo = async (_body, shop) => {
       $originalOrderPrice: 0,
       $totalAmountPaid: 0,
     },
+    CourierName: _body.tracking_company,
+    CurrentStatus: _body.shipment_status,
+    OriginalOrderPrice: 0,
+    AmountPaid: 0,
+    Products: [],
+    City: _body.destination.city || '',
+    Province: _body.destination.province || '',
+    Country: _body.destination.country || '',
+    Company: _body.destination.company || '',
+    DiscountCodeApplied: '',
   }
   //Push product names
   _body.line_items.forEach((item) => {
     klaivyoObject.customer_properties.$products.push(item.title)
+    klaivyoObject.Products.push(item.title)
     klaivyoObject.customer_properties.$originalOrderPrice =
       klaivyoObject.customer_properties.$originalOrderPrice +
       +item.price -
       +item.total_discount
   })
+  klaivyoObject.OriginalOrderPrice =
+    klaivyoObject.customer_properties.$originalOrderPrice
   //Get discount codes applied by sending a GraphQl request:
   try {
     const shopSessions =
@@ -112,8 +125,12 @@ const sendDataToKlaivyo = async (_body, shop) => {
           klaivyoObject.customer_properties.$totalAmountPaid =
             +orderDiscountCodes.body.data.order?.totalPriceSet?.shopMoney
               ?.amount
+          klaivyoObject.TotalAmountPaid =
+            klaivyoObject.customer_properties.$totalAmountPaid
           klaivyoObject.customer_properties.$discountCodeApplied =
             orderDiscountCodes.body.data.order?.discountCode
+          klaivyoObject.DiscountCodeApplied =
+            klaivyoObject.customer_properties.$discountCodeApplied
         }
       }
     }
