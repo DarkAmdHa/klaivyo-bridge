@@ -73,10 +73,11 @@ const sendDataToKlaivyo = async (_body, shop) => {
       $value: 0,
       CourierName: [_body.tracking_company],
       CurrentStatus: [_body.shipment_status],
-      OriginAddress: []
+      OriginAddress: [_body.origin_address],
       OriginalOrderPrice: 0,
       TotalAmountPaid: 0,
       ItemNames: [],
+      DeliveredOn: [_body.updated_at],
       Items: [],
       City: [_body.destination.city],
       Province: [_body.destination.province],
