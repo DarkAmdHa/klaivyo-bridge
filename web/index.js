@@ -135,7 +135,7 @@ const sendDataToKlaivyo = async (_body, shop) => {
                 }
               }`,
           })
-          // console.log(orderDiscountCodes.body.data.order)
+          console.log(orderDiscountCodes.body.data.order)
           klaivyoObject.customer_properties.$totalAmountPaid =
             +orderDiscountCodes.body.data.order?.totalPriceSet?.shopMoney
               ?.amount
