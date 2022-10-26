@@ -160,6 +160,7 @@ Shopify.Webhooks.Registry.addHandler('FULFILLMENTS_CREATE', {
   path: '/api/fulfillment-create',
   webhookHandler: async (_topic, shop, _body) => {
     _body = JSON.parse(_body)
+    console.log('Created')
     if (_body.shipment_status === 'delivered') {
       sendDataToKlaivyo(_body, shop)
     }
@@ -168,6 +169,7 @@ Shopify.Webhooks.Registry.addHandler('FULFILLMENTS_CREATE', {
 Shopify.Webhooks.Registry.addHandler('FULFILLMENTS_CREATE', {
   path: '//api/fulfillment-create',
   webhookHandler: async (_topic, shop, _body) => {
+    console.log('Created')
     _body = JSON.parse(_body)
     if (_body.shipment_status === 'delivered') {
       sendDataToKlaivyo(_body, shop)
@@ -179,6 +181,8 @@ Shopify.Webhooks.Registry.addHandler('FULFILLMENTS_UPDATE', {
   path: '/api/fulfillment-update',
   webhookHandler: async (_topic, shop, _body) => {
     _body = JSON.parse(_body)
+    console.log('updated')
+    sendDataToKlaivyo()
     if (_body.shipment_status === 'delivered') {
       sendDataToKlaivyo(_body, shop)
     }
@@ -189,6 +193,8 @@ Shopify.Webhooks.Registry.addHandler('FULFILLMENTS_UPDATE', {
   path: '//api/fulfillment-update',
   webhookHandler: async (_topic, shop, _body) => {
     _body = JSON.parse(_body)
+    console.log('updated')
+    sendDataToKlaivyo()
     if (_body.shipment_status === 'delivered') {
       sendDataToKlaivyo(_body, shop)
     }
