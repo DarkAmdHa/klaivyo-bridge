@@ -49,6 +49,7 @@ Shopify.Webhooks.Registry.addHandler('APP_UNINSTALLED', {
 })
 
 const sendDataToKlaivyo = async (_body, shop) => {
+  console.log(_body)
   const klaivyoObject = {
     token: 'RPtAty',
     event: 'Order Delivered',
