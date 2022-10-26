@@ -73,21 +73,21 @@ const sendDataToKlaivyo = async (_body, shop) => {
       $originalOrderPrice: 0,
       $totalAmountPaid: 0,
     },
-    CourierName: _body.tracking_company,
-    CurrentStatus: _body.shipment_status,
+    $event_id: 314159265,
+    $value: 0,
+    CourierName: [_body.tracking_company],
+    CurrentStatus: [_body.shipment_status],
     OriginalOrderPrice: 0,
-    AmountPaid: 0,
-    Products: [],
-    City: _body.destination.city || '',
-    Province: _body.destination.province || '',
-    Country: _body.destination.country || '',
-    Company: _body.destination.company || '',
-    DiscountCodeApplied: '',
+    ItemNames: [],
+    City: [_body.destination.city],
+    Province: [_body.destination.province],
+    Country: [_body.destination.country],
+    DiscountCodeApplied: [],
   }
   //Push product names
   _body.line_items.forEach((item) => {
     klaivyoObject.customer_properties.$products.push(item.title)
-    klaivyoObject.Products.push(item.title)
+    klaivyoObject.ItemNames.push(item.title)
     klaivyoObject.customer_properties.$originalOrderPrice =
       klaivyoObject.customer_properties.$originalOrderPrice +
       +item.price -
@@ -125,12 +125,13 @@ const sendDataToKlaivyo = async (_body, shop) => {
           klaivyoObject.customer_properties.$totalAmountPaid =
             +orderDiscountCodes.body.data.order?.totalPriceSet?.shopMoney
               ?.amount
-          klaivyoObject.TotalAmountPaid =
+          klaivyoObject.$value =
             klaivyoObject.customer_properties.$totalAmountPaid
           klaivyoObject.customer_properties.$discountCodeApplied =
             orderDiscountCodes.body.data.order?.discountCode
-          klaivyoObject.DiscountCodeApplied =
+          klaivyoObject.DiscountCodeApplied.push(
             klaivyoObject.customer_properties.$discountCodeApplied
+          )
         }
       }
     }
