@@ -72,23 +72,26 @@ const sendDataToKlaivyo = async (_body, shop) => {
       $orderId: _body.order_id || '',
       $originalOrderPrice: 0,
       $totalAmountPaid: 0,
+      $discountCodeApplied: '',
     },
-    $event_id: 314159265,
-    $value: 0,
-    CourierName: [_body.tracking_company],
-    CurrentStatus: [_body.shipment_status],
-    OriginalOrderPrice: 0,
-    ItemNames: [],
-    City: [_body.destination.city],
-    Province: [_body.destination.province],
-    Country: [_body.destination.country],
-    DiscountCodeApplied: [],
-    Items: [],
+    properties: {
+      $event_id: _body.order_id,
+      $value: 0,
+      CourierName: [_body.tracking_company],
+      CurrentStatus: [_body.shipment_status],
+      OriginalOrderPrice: 0,
+      ItemNames: [],
+      Items: [],
+      City: [_body.destination.city],
+      Province: [_body.destination.province],
+      Country: [_body.destination.country],
+      DiscountCodeApplied: [],
+    },
   }
   //Push product names
   _body.line_items.forEach((item) => {
     klaivyoObject.customer_properties.$products.push(item.title)
-    klaivyoObject.ItemNames.push(item.title)
+    klaivyoObject.properties.ItemNames.push(item.title)
     klaivyoObject.customer_properties.$originalOrderPrice =
       klaivyoObject.customer_properties.$originalOrderPrice +
       +item.price -
@@ -100,16 +103,11 @@ const sendDataToKlaivyo = async (_body, shop) => {
       SKU: item.sku,
       ProductId: item.product_id,
       Price: item.price,
-      Courier: _body.tracking_company,
-      CurrentStatus: _body.shipment_status,
-      City: _body.destination.city,
-      Province: _body.destination.province,
-      Country: _body.destination.country,
     }
 
-    klaivyoObject.ItemNames.push(itemObj)
+    klaivyoObject.properties.Items.push(itemObj)
   })
-  klaivyoObject.OriginalOrderPrice =
+  klaivyoObject.properties.OriginalOrderPrice =
     klaivyoObject.customer_properties.$originalOrderPrice
   //Get discount codes applied by sending a GraphQl request:
   try {
@@ -141,11 +139,14 @@ const sendDataToKlaivyo = async (_body, shop) => {
           klaivyoObject.customer_properties.$totalAmountPaid =
             +orderDiscountCodes.body.data.order?.totalPriceSet?.shopMoney
               ?.amount
+
           klaivyoObject.$value =
             klaivyoObject.customer_properties.$totalAmountPaid
+
           klaivyoObject.customer_properties.$discountCodeApplied =
             orderDiscountCodes.body.data.order?.discountCode
-          klaivyoObject.DiscountCodeApplied.push(
+
+          klaivyoObject.properties.DiscountCodeApplied.push(
             klaivyoObject.customer_properties.$discountCodeApplied
           )
         }
