@@ -65,37 +65,34 @@ const sendDataToKlaivyo = async (_body, shop) => {
       $adddress2: _body.destination.address2 || '',
       $company: _body.destination.company || '',
       $fullname: _body.destination.name || '',
-      $countryCode: _body.destination.country_code || '',
-      $provinceCode: _body.destination.province_code || '',
-      $products: [],
-      $trackingCompany: _body.tracking_company || '',
-      $orderId: _body.order_id || '',
-      $originalOrderPrice: 0,
-      $totalAmountPaid: 0,
-      $discountCodeApplied: '',
+      $orderId: _body.order_id,
     },
+
     properties: {
       $event_id: _body.order_id,
       $value: 0,
       CourierName: [_body.tracking_company],
       CurrentStatus: [_body.shipment_status],
+      OriginAddress: []
       OriginalOrderPrice: 0,
+      TotalAmountPaid: 0,
       ItemNames: [],
       Items: [],
       City: [_body.destination.city],
       Province: [_body.destination.province],
+      ProvinceCode: [_body.destination.province_code],
       Country: [_body.destination.country],
+      ZipCode: [_body.destination.zip],
+      CountryCode: [_body.destination.country_code],
       DiscountCodeApplied: [],
     },
   }
   //Push product names
   _body.line_items.forEach((item) => {
-    klaivyoObject.customer_properties.$products.push(item.title)
     klaivyoObject.properties.ItemNames.push(item.title)
-    klaivyoObject.customer_properties.$originalOrderPrice =
-      klaivyoObject.customer_properties.$originalOrderPrice +
-      +item.price -
-      +item.total_discount
+    klaivyoObject.properties.OriginalOrderPrice =
+    klaivyoObject.properties.OriginalOrderPrice +
+      +(item.price * item.quantity)
 
     const itemObj = {
       Name: item.title,
@@ -108,7 +105,6 @@ const sendDataToKlaivyo = async (_body, shop) => {
     klaivyoObject.properties.Items.push(itemObj)
   })
   klaivyoObject.properties.OriginalOrderPrice =
-    klaivyoObject.customer_properties.$originalOrderPrice
   //Get discount codes applied by sending a GraphQl request:
   try {
     const shopSessions =
@@ -135,18 +131,16 @@ const sendDataToKlaivyo = async (_body, shop) => {
                 }
               }`,
           })
-          klaivyoObject.customer_properties.$totalAmountPaid =
-            +orderDiscountCodes.body.data.order?.totalPriceSet?.shopMoney
-              ?.amount
+            
 
-          klaivyoObject.$value =
-            klaivyoObject.customer_properties.$totalAmountPaid
+          klaivyoObject.properties.TotalAmountPaid =
+          +orderDiscountCodes.body.data.order?.totalPriceSet?.shopMoney
+          ?.amount
 
-          klaivyoObject.customer_properties.$discountCodeApplied =
-            orderDiscountCodes.body.data.order?.discountCode
+            
 
           klaivyoObject.properties.DiscountCodeApplied.push(
-            klaivyoObject.customer_properties.$discountCodeApplied
+            orderDiscountCodes.body.data.order?.discountCode
           )
         }
       }
@@ -178,7 +172,7 @@ Shopify.Webhooks.Registry.addHandler('FULFILLMENTS_CREATE', {
   path: '/api/fulfillment-create',
   webhookHandler: async (_topic, shop, _body) => {
     _body = JSON.parse(_body)
-    console.log('Created')
+    console.log('Created @ ' + shop)
     if (_body.shipment_status === 'delivered') {
       sendDataToKlaivyo(_body, shop)
     }
@@ -187,7 +181,8 @@ Shopify.Webhooks.Registry.addHandler('FULFILLMENTS_CREATE', {
 Shopify.Webhooks.Registry.addHandler('FULFILLMENTS_CREATE', {
   path: '//api/fulfillment-create',
   webhookHandler: async (_topic, shop, _body) => {
-    console.log('Created')
+    console.log('Created @ ' + shop)
+
     _body = JSON.parse(_body)
     if (_body.shipment_status === 'delivered') {
       sendDataToKlaivyo(_body, shop)
@@ -199,7 +194,8 @@ Shopify.Webhooks.Registry.addHandler('FULFILLMENTS_UPDATE', {
   path: '/api/fulfillment-update',
   webhookHandler: async (_topic, shop, _body) => {
     _body = JSON.parse(_body)
-    console.log('updated')
+    console.log('Updated @ ' + shop)
+    console.log(_body.shipment_status)
     sendDataToKlaivyo(_body, shop)
 
     if (_body.shipment_status === 'delivered') {
@@ -212,7 +208,8 @@ Shopify.Webhooks.Registry.addHandler('FULFILLMENTS_UPDATE', {
   path: '//api/fulfillment-update',
   webhookHandler: async (_topic, shop, _body) => {
     _body = JSON.parse(_body)
-    console.log('updated')
+    console.log('Updated @ ' + shop)
+    console.log(_body.shipment_status)
     sendDataToKlaivyo(_body, shop)
 
     if (_body.shipment_status === 'delivered') {
