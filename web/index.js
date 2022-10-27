@@ -166,6 +166,7 @@ const sendDataToKlaivyo = async (_body, shop) => {
     .then((json) => console.log(json))
     .catch((err) => console.error('error:' + err))
 }
+console.log('Starting')
 Shopify.Webhooks.Registry.addHandler('FULFILLMENTS_CREATE', {
   path: '/api/fulfillment-create',
   webhookHandler: async (_topic, shop, _body) => {
