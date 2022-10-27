@@ -194,8 +194,6 @@ Shopify.Webhooks.Registry.addHandler('FULFILLMENTS_UPDATE', {
     _body = JSON.parse(_body)
     console.log('Updated @ ' + shop)
     console.log(_body.shipment_status)
-    sendDataToKlaivyo(_body, shop)
-
     if (_body.shipment_status === 'delivered') {
       sendDataToKlaivyo(_body, shop)
     }
@@ -208,8 +206,6 @@ Shopify.Webhooks.Registry.addHandler('FULFILLMENTS_UPDATE', {
     _body = JSON.parse(_body)
     console.log('Updated @ ' + shop)
     console.log(_body.shipment_status)
-    sendDataToKlaivyo(_body, shop)
-
     if (_body.shipment_status === 'delivered') {
       sendDataToKlaivyo(_body, shop)
     }
