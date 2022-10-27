@@ -190,7 +190,7 @@ Shopify.Webhooks.Registry.addHandler('FULFILLMENTS_CREATE', {
   path: '//api/fulfillment-create',
   webhookHandler: async (_topic, shop, _body) => {
     console.log('Created @ ' + shop)
-
+    checkSession()
     _body = JSON.parse(_body)
     if (_body.shipment_status === 'delivered') {
       sendDataToKlaivyo(_body, shop)
