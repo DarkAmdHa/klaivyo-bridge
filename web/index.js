@@ -51,7 +51,7 @@ Shopify.Webhooks.Registry.addHandler('APP_UNINSTALLED', {
 const sendDataToKlaivyo = async (_body, shop) => {
   const klaivyoObject = {
     token: 'RPtAty',
-    event: 'Order Delivered',
+    event: 'Delivered Order',
     customer_properties: {
       $email: _body.email || '',
       $first_name: _body.destination.first_name || '',
@@ -174,12 +174,13 @@ const checkSession = async () => {
   )
   console.log(sessionObj)
 }
-checkSession()
+
 Shopify.Webhooks.Registry.addHandler('FULFILLMENTS_CREATE', {
   path: '/api/fulfillment-create',
   webhookHandler: async (_topic, shop, _body) => {
     _body = JSON.parse(_body)
     console.log('Created @ ' + shop)
+    checkSession()
     if (_body.shipment_status === 'delivered') {
       sendDataToKlaivyo(_body, shop)
     }
