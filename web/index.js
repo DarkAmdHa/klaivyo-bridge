@@ -166,7 +166,15 @@ const sendDataToKlaivyo = async (_body, shop) => {
     .then((json) => console.log(json))
     .catch((err) => console.error('error:' + err))
 }
-console.log('Starting')
+
+const checkSession = async () => {
+  const shop = 'tinystuds.myshopify.com'
+  const sessionObj = await Shopify.Context.SESSION_STORAGE.findSessionsByShop(
+    shop
+  )
+  console.log(sessionObj)
+}
+checkSession()
 Shopify.Webhooks.Registry.addHandler('FULFILLMENTS_CREATE', {
   path: '/api/fulfillment-create',
   webhookHandler: async (_topic, shop, _body) => {
