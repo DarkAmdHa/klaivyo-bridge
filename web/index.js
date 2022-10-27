@@ -167,20 +167,11 @@ const sendDataToKlaivyo = async (_body, shop) => {
     .catch((err) => console.error('error:' + err))
 }
 
-const checkSession = async () => {
-  const shop = 'tinystuds.myshopify.com'
-  const sessionObj = await Shopify.Context.SESSION_STORAGE.findSessionsByShop(
-    shop
-  )
-  console.log(sessionObj)
-}
-
 Shopify.Webhooks.Registry.addHandler('FULFILLMENTS_CREATE', {
   path: '/api/fulfillment-create',
   webhookHandler: async (_topic, shop, _body) => {
     _body = JSON.parse(_body)
     console.log('Created @ ' + shop)
-    checkSession()
     if (_body.shipment_status === 'delivered') {
       sendDataToKlaivyo(_body, shop)
     }
@@ -190,7 +181,6 @@ Shopify.Webhooks.Registry.addHandler('FULFILLMENTS_CREATE', {
   path: '//api/fulfillment-create',
   webhookHandler: async (_topic, shop, _body) => {
     console.log('Created @ ' + shop)
-    checkSession()
     _body = JSON.parse(_body)
     if (_body.shipment_status === 'delivered') {
       sendDataToKlaivyo(_body, shop)
@@ -204,7 +194,6 @@ Shopify.Webhooks.Registry.addHandler('FULFILLMENTS_UPDATE', {
     _body = JSON.parse(_body)
     console.log('Updated @ ' + shop)
     console.log(_body.shipment_status)
-    sendDataToKlaivyo(_body, shop)
     if (_body.shipment_status === 'delivered') {
       sendDataToKlaivyo(_body, shop)
     }
@@ -217,7 +206,6 @@ Shopify.Webhooks.Registry.addHandler('FULFILLMENTS_UPDATE', {
     _body = JSON.parse(_body)
     console.log('Updated @ ' + shop)
     console.log(_body.shipment_status)
-    sendDataToKlaivyo(_body, shop)
     if (_body.shipment_status === 'delivered') {
       sendDataToKlaivyo(_body, shop)
     }
