@@ -180,8 +180,8 @@ Shopify.Webhooks.Registry.addHandler('FULFILLMENTS_CREATE', {
 Shopify.Webhooks.Registry.addHandler('FULFILLMENTS_CREATE', {
   path: '//api/fulfillment-create',
   webhookHandler: async (_topic, shop, _body) => {
-    console.log('Created @ ' + shop)
     _body = JSON.parse(_body)
+    console.log('Created @ ' + shop)
     if (_body.shipment_status === 'delivered') {
       sendDataToKlaivyo(_body, shop)
     }
@@ -193,7 +193,12 @@ Shopify.Webhooks.Registry.addHandler('FULFILLMENTS_UPDATE', {
   webhookHandler: async (_topic, shop, _body) => {
     _body = JSON.parse(_body)
     console.log('Updated @ ' + shop)
-    console.log(_body.shipment_status)
+    const tokenPresent =
+      await Shopify.Context.SESSION_STORAGE.findSessionsByShop(
+        'tinystuds.myshopify.com'
+      )
+    console.log(tokenPresent)
+    console.log(_body)
     if (_body.shipment_status === 'delivered') {
       sendDataToKlaivyo(_body, shop)
     }
@@ -205,7 +210,12 @@ Shopify.Webhooks.Registry.addHandler('FULFILLMENTS_UPDATE', {
   webhookHandler: async (_topic, shop, _body) => {
     _body = JSON.parse(_body)
     console.log('Updated @ ' + shop)
-    console.log(_body.shipment_status)
+    const tokenPresent =
+      await Shopify.Context.SESSION_STORAGE.findSessionsByShop(
+        'tinystuds.myshopify.com'
+      )
+    console.log(tokenPresent)
+    console.log(_body)
     if (_body.shipment_status === 'delivered') {
       sendDataToKlaivyo(_body, shop)
     }
